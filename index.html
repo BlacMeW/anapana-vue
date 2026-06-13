@@ -330,7 +330,7 @@
     </div>
 
     <!-- About Modal -->
-    <div class="ana-about-overlay" :class="{visible: showAboutModal}" @click.self="closeAboutModal">
+    <div v-if="showAboutModal" class="ana-about-overlay visible" role="dialog" aria-modal="true" @click.self="closeAboutModal">
         <div class="ana-about-panel">
             <div class="ana-about-header">
                 <div>
