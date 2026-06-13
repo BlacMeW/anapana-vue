@@ -88,6 +88,13 @@ body {
         .btn-anapana-mode:hover:not(.active) {
             background: var(--cream); border-color: var(--saffron); color: var(--saffron-dark);
         }
+        .btn-anapana-mode:focus,
+        .btn-anapana-mode:focus-visible,
+        .btn-anapana-preset:focus,
+        .btn-anapana-preset:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
 
         /* Main touch zone */
         /* Start button (shown in section, not full-screen) */

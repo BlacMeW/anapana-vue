@@ -631,6 +631,7 @@ const app = createApp({
         });
 
         onMounted(() => {
+            tapMode.value = 'round';
             wakeLockSupported.value = 'wakeLock' in navigator;
             loadHistory();
             document.addEventListener('keydown', (e) => {
