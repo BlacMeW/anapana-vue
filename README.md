@@ -71,3 +71,10 @@ It is designed to show breathing time, breath counts, round counts (ဝါရ), 
 - This is a static app and does not require a build tool.
 - Vue 3 is loaded directly from a CDN.
 - You can run it simply by opening `index.html` in a browser.
+
+### GitHub Pages
+
+- This repository includes a GitHub Actions workflow at `.github/workflows/deploy-pages.yml`.
+- After pushing to `main`, GitHub Actions will build and deploy the site to GitHub Pages.
+- In the repository settings, make sure **Pages** is set to use **GitHub Actions**.
+- The app is already structured for Pages because it uses relative paths like `css/style.css` and `js/app.js`.
