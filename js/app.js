@@ -14,7 +14,7 @@ const app = createApp({
         
         // Settings
         const breathsPerRound = ref(10);
-        const tapMode = ref('breath'); // 'breath' | 'round'
+        const tapMode = ref('round'); // 'breath' | 'round'
         const roundTarget = ref(0);
         const inhaleTarget = ref(3);
         const exhaleTarget = ref(3);
