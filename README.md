@@ -77,6 +77,7 @@ It is designed to show breathing time, breath counts, round counts (ဝါရ), 
 - This is a static app and does not require a build tool.
 - Vue 3 is loaded directly from a CDN.
 - You can run it simply by opening `index.html` in a browser.
+- The repository includes a `.nojekyll` file so GitHub Pages serves the static files without Jekyll processing.
 - The `About` modal follows the same visual structure as the Flutter reference dialog, while the wording is written specifically for this app and its dedication.
 
 ### GitHub Pages
