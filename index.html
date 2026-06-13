@@ -140,6 +140,12 @@
                 <span>{{ isEnglish ? 'History' : 'မှတ်တမ်း' }}</span>
             </button>
 
+            <!-- About Button -->
+            <button class="btn-show-about" @click="openAboutModal">
+                <svg style="width:15px;height:15px;fill:currentColor;flex-shrink:0;" viewBox="0 0 24 24"><path d="M11 7h2V5h-2v2zm1 13a9 9 0 1 1 0-18 9 9 0 0 1 0 18zm0-2a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm-1-3h2v-6h-2v6z"/></svg>
+                <span>{{ isEnglish ? 'About' : 'အကြောင်း' }}</span>
+            </button>
+
             <!-- Wake Lock Toggle -->
             <button class="btn-wakelock" :class="{active: wakeLockEnabled}" @click="toggleWakeLock" title="Screen Wake Lock" v-if="wakeLockSupported">
                 <svg v-if="wakeLockEnabled" style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19zm1-11h-2v4l3.5 2.1.8-1.2-2.3-1.4V8z"/></svg>
@@ -318,6 +324,104 @@
                         <button class="btn-ahi-view" @click="viewHistoryEntry(entry)">{{ isEnglish ? 'View' : 'ကြည့်ရန်' }}</button>
                         <button class="btn-ahi-del" @click="deleteHistoryEntry(entry.id)" :title="isEnglish ? 'Delete' : 'ဖျက်ရန်'">✕</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="ana-about-overlay" :class="{visible: showAboutModal}" @click.self="closeAboutModal">
+        <div class="ana-about-panel">
+            <div class="ana-about-header">
+                <div>
+                    <div class="ana-about-kicker">About this app</div>
+                    <div class="ana-about-title">Ānāpāna Breathing Counter</div>
+                </div>
+                <button class="ana-about-close" @click="closeAboutModal" :title="isEnglish ? 'Close' : 'ပိတ်ရန်'">✕</button>
+            </div>
+
+            <div class="ana-about-section ana-about-image-block">
+                <div class="ana-about-image-frame">
+                    <img class="ana-about-hero-photo" src="assets/images/about-dedication.jpg" alt="Dedication image">
+                </div>
+            </div>
+
+            <div class="ana-about-section">
+                <div class="ana-about-section-title">A quiet breathing companion offered with love and remembrance.</div>
+            </div>
+
+            <div class="ana-about-section">
+                <div class="ana-about-section-heading">Features</div>
+                <div class="ana-about-list">
+                    <div>• One-tap session start</div>
+                    <div>• Per-breath counting or round-based counting</div>
+                    <div>• Supports 8 / 10 / 12 breaths as 1 ဝါရ</div>
+                    <div>• Bilingual result display in Myanmar and English</div>
+                    <div>• Samadhi score, consistency, deviation, and duration analysis</div>
+                    <div>• Session history storage and replay</div>
+                    <div>• Wake Lock support to keep the screen on during practice</div>
+                </div>
+            </div>
+
+            <div class="ana-about-section">
+                <div class="ana-about-section-heading">About the App</div>
+                <div class="ana-about-body">
+                    `anapana-vue` is a simple yet polished Ānāpāna breathing counter built with Vue 3. It is designed to show breathing time, breath counts, round counts (ဝါရ), and result/history analysis on a single screen.
+                </div>
+            </div>
+
+            <div class="ana-about-section">
+                <div class="ana-about-section-heading">Gallery</div>
+                <div class="ana-about-gallery-grid">
+                    <div class="ana-about-gallery-row">
+                        <div class="ana-about-gallery-item">
+                            <img class="ana-about-gallery-photo" src="assets/images/photo_2025-04-21_09-30-38 (5).jpg" alt="Gallery image one">
+                        </div>
+                        <div class="ana-about-gallery-item">
+                            <img class="ana-about-gallery-photo" src="assets/images/photo_2025-04-21_19-35-33.jpg" alt="Gallery image two">
+                        </div>
+                    </div>
+                    <div class="ana-about-gallery-row">
+                        <div class="ana-about-gallery-item">
+                            <img class="ana-about-gallery-photo" src="assets/images/lollipop.png" alt="Gallery image three">
+                        </div>
+                        <div class="ana-about-gallery-item">
+                            <img class="ana-about-gallery-photo" src="assets/images/suprtboy.jpg" alt="Gallery image four">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ana-about-section">
+                <div class="ana-about-section-heading">In Memoriam</div>
+                <div class="ana-about-body">
+                    ဤအက်ပ်ကို သားသားလေး၏ ကောင်းကျိုး၊ စိတ်ငြိမ်သက်မှု၊ ပညာထွန်းကားမှုနှင့် မေတ္တာတရား တိုးပွားမှုအတွက် အလေးအနက် ရည်စူးပါသည်။
+                </div>
+                <div class="ana-about-body">
+                    ရှုမှတ်သည့်အခါတိုင်း သတိတရားခိုင်မာစေပြီး၊ ရင်အေးသက်သာစေကာ၊ ဘဝလမ်းခရီးတွင် ကောင်းမွန်သည့် အားအင်နှင့် ငြိမ်းချမ်းမှုကို ပေးစွမ်းနိုင်သော နူးညံ့သည့် တရားအလှူတစ်ခုအဖြစ် ရှိနေစေလိုပါသည်။
+                </div>
+                <div class="ana-about-body">
+                    This app is sincerely offered as a merit dedication for a beloved little son, with love and mindful remembrance.
+                </div>
+                <div class="ana-about-body">
+                    May every gentle breath counted here nurture calm attention, steady practice, and wholesome strength, becoming a quiet support for a peaceful and fortunate life.
+                </div>
+                <div class="ana-about-body">
+                    This is a quiet companion for mindful practice, reflection, and loving remembrance.
+                </div>
+                <div class="ana-about-body ana-about-italic">
+                    For a beloved little son — always remembered, always loved.
+                </div>
+            </div>
+
+            <div class="ana-about-footer">
+                <div class="ana-about-footer-item">
+                    <span class="ana-about-footer-label">App</span>
+                    <span class="ana-about-footer-value">Ānāpāna Breathing Counter</span>
+                </div>
+                <div class="ana-about-footer-item">
+                    <span class="ana-about-footer-label">Source</span>
+                    <span class="ana-about-footer-value">BlacMeW / anapana-vue</span>
                 </div>
             </div>
         </div>

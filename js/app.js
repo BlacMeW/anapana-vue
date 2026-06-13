@@ -36,6 +36,7 @@ const app = createApp({
         const history = ref([]);
         const showResultModal = ref(false);
         const showHistoryModal = ref(false);
+        const showAboutModal = ref(false);
         const isViewingHistory = ref(false);
         const historyDateLabel = ref('');
         const resultStats = ref(null);
@@ -105,6 +106,14 @@ const app = createApp({
 
         const closeHistoryModal = () => {
             showHistoryModal.value = false;
+        };
+
+        const openAboutModal = () => {
+            showAboutModal.value = true;
+        };
+
+        const closeAboutModal = () => {
+            showAboutModal.value = false;
         };
 
         const playGongTone = () => {
@@ -642,9 +651,11 @@ const app = createApp({
             showBadge, badgeText, breathBadgeClass, showTargetBanner, showResultBtn,
             wakeLockEnabled, wakeLockSupported, history,
             showResultModal, showHistoryModal, isViewingHistory, historyDateLabel, resultStats, samadhiStats,
+            showAboutModal,
             formattedTime, displayBreaths, displayBreathsPerRoundSub, displayRoundTarget, overlayHintMain, overlayHintSub,
             setBreathsPerRound, setTapMode, startSession, stopSession, handleTouch, handleClick, toggleWakeLock,
-            clearHistory, deleteHistoryEntry, viewHistoryEntry, hideResult, openResultModal, openHistoryModal, closeHistoryModal
+            clearHistory, deleteHistoryEntry, viewHistoryEntry, hideResult, openResultModal, openHistoryModal, closeHistoryModal,
+            openAboutModal, closeAboutModal
         };
     }
 });

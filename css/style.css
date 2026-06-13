@@ -633,6 +633,135 @@ body {
         .btn-show-history.visible { display: flex; }
         .btn-show-history:hover { background: var(--primary-robe); color: var(--white); border-color: var(--primary-robe); }
 
+        /* ---- About button ---- */
+        .btn-show-about {
+            display: flex; align-items: center; gap: 0.45rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.92), var(--cream-dark));
+            border: 1px solid rgba(184,138,20,0.28); color: var(--primary-light);
+            padding: 0.5rem 1.05rem; border-radius: 9999px;
+            font-size: 0.8rem; font-weight: 700; cursor: pointer;
+            font-family: 'Noto Sans Myanmar','Outfit',sans-serif;
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-show-about:hover {
+            background: linear-gradient(135deg, var(--primary-robe), hsl(28, 60%, 28%));
+            color: var(--gold-light); border-color: var(--saffron);
+            box-shadow: 0 0 18px rgba(217,119,6,0.18);
+        }
+        @media (max-width: 680px) {
+            .btn-show-about { padding-inline: 0.9rem; }
+        }
+
+        /* ---- About overlay / panel ---- */
+        .ana-about-overlay {
+            position: fixed; inset: 0; z-index: 10600;
+            background: rgba(10,3,1,0.82); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            padding: 1.1rem;
+        }
+        .ana-about-overlay.visible { display: flex; }
+        .ana-about-panel {
+            width: 100%; max-width: 720px; max-height: 92vh; overflow-y: auto;
+            background: linear-gradient(180deg, #fffdf8 0%, #fff7eb 100%);
+            border-radius: 1.5rem; box-shadow: 0 0 60px rgba(0,0,0,0.55);
+            border: 1px solid rgba(217,119,6,0.25);
+            padding: 1.2rem;
+            display: flex; flex-direction: column; gap: 1rem;
+        }
+        .ana-about-header {
+            display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+        }
+        .ana-about-kicker {
+            font-size: 0.68rem; font-weight: 800; letter-spacing: 0.11em; text-transform: uppercase;
+            color: var(--saffron-dark); font-family: 'Outfit', sans-serif;
+        }
+        .ana-about-title {
+            font-size: 1.25rem; font-weight: 900; color: var(--primary-robe);
+            font-family: 'Noto Sans Myanmar','Outfit',sans-serif; line-height: 1.35;
+        }
+        .ana-about-close {
+            width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+            background: var(--cream-dark); color: var(--text-muted); font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition-fast);
+            flex-shrink: 0;
+        }
+        .ana-about-close:hover { background: var(--primary-robe); color: var(--white); }
+        .ana-about-hero {
+            display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+            background: linear-gradient(135deg, rgba(253,230,138,0.28), rgba(255,255,255,0.78));
+            border: 1px solid rgba(217,119,6,0.18);
+            border-radius: 1.1rem; padding: 0.95rem 1rem;
+        }
+        .ana-about-hero-photo {
+            width: 98px; height: 98px; border-radius: 1rem; object-fit: cover;
+            box-shadow: var(--shadow-md); flex-shrink: 0;
+            border: 1px solid rgba(184,138,20,0.22);
+        }
+        .ana-about-image-block { display: block; }
+        .ana-about-image-frame {
+            width: 100%; max-height: 400px; overflow: hidden; border-radius: 1.1rem;
+            border: 1px solid rgba(184,138,20,0.18); box-shadow: var(--shadow-sm);
+        }
+        .ana-about-image-frame .ana-about-hero-photo {
+            width: 100%; height: 400px; border-radius: 0; box-shadow: none; border: none;
+            object-fit: contain; background: #f8f0e0;
+        }
+        .ana-about-section {
+            background: var(--white); border-radius: 1rem; border: 1px solid rgba(184,138,20,0.18);
+            padding: 0.95rem 1rem; box-shadow: var(--shadow-sm);
+        }
+        .ana-about-section-title {
+            font-size: 0.92rem; line-height: 1.65; color: var(--primary-robe); font-weight: 700;
+            font-family: 'Noto Sans Myanmar','Outfit',sans-serif;
+        }
+        .ana-about-section-heading {
+            font-size: 0.82rem; font-weight: 800; color: var(--saffron-dark);
+            font-family: 'Outfit', sans-serif; margin-bottom: 0.5rem;
+        }
+        .ana-about-list {
+            display: grid; gap: 0.28rem; font-size: 0.82rem; line-height: 1.65;
+            color: var(--primary-light); font-family: 'Outfit', sans-serif;
+        }
+        .ana-about-body {
+            font-size: 0.83rem; line-height: 1.75; color: var(--primary-light);
+            font-family: 'Outfit', sans-serif;
+        }
+        .ana-about-body + .ana-about-body { margin-top: 0.7rem; }
+        .ana-about-italic { font-style: italic; font-weight: 600; }
+        .ana-about-gallery-grid { display: grid; gap: 0.8rem; }
+        .ana-about-gallery-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+        .ana-about-gallery-item {
+            border-radius: 0.9rem; overflow: hidden; border: 1px solid rgba(184,138,20,0.18);
+            box-shadow: var(--shadow-sm); background: #f8f0e0;
+        }
+        .ana-about-gallery-photo {
+            width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block;
+        }
+        .ana-about-footer {
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem;
+        }
+        .ana-about-footer-item {
+            background: var(--cream); border-radius: 0.85rem; padding: 0.7rem 0.8rem;
+            border: 1px solid rgba(184,138,20,0.16);
+            display: flex; flex-direction: column; gap: 0.15rem;
+        }
+        .ana-about-footer-label {
+            font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--text-muted); font-family: 'Outfit', sans-serif;
+        }
+        .ana-about-footer-value {
+            font-size: 0.76rem; font-weight: 700; color: var(--primary-robe);
+            font-family: 'Noto Sans Myanmar','Outfit',sans-serif; line-height: 1.45;
+        }
+        @media (max-width: 720px) {
+            .ana-about-gallery-row, .ana-about-footer { grid-template-columns: 1fr; }
+            .ana-about-panel { padding: 1rem; }
+            .ana-about-hero-photo { width: 84px; height: 84px; }
+            .ana-about-image-frame .ana-about-hero-photo { width: 100%; height: 260px; }
+        }
+
         /* ---- History overlay / panel ---- */
         .ana-history-overlay {
             position: fixed; inset: 0; z-index: 10500;
