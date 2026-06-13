@@ -738,14 +738,21 @@ body {
         .ana-about-body + .ana-about-body { margin-top: 0.7rem; }
         .ana-about-italic { font-style: italic; font-weight: 600; }
         .ana-about-gallery-grid { display: grid; gap: 1rem; }
-        .ana-about-gallery-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-        .ana-about-gallery-item {
-            border-radius: 1rem; overflow: hidden; border: 1px solid rgba(184,138,20,0.18);
-            box-shadow: var(--shadow-sm); background: #fffaf0; min-height: 240px;
+        .ana-about-album {
+            grid-template-columns: 1fr;
+        }
+        .ana-about-album-page {
+            border-radius: 1.1rem; overflow: hidden; border: 1px solid rgba(184,138,20,0.18);
+            box-shadow: var(--shadow-sm); background: linear-gradient(180deg, #fffaf0, #fffdf7);
+            padding: 0.8rem;
         }
         .ana-about-gallery-photo {
-            width: 100%; height: 240px; object-fit: contain; display: block; background: #fffaf0;
-            padding: 0.35rem;
+            width: 100%; height: 320px; object-fit: contain; display: block; background: #fffaf0;
+            padding: 0.45rem; border-radius: 0.8rem;
+        }
+        .ana-about-album-caption {
+            margin-top: 0.45rem; text-align: center; font-size: 0.72rem; font-weight: 700;
+            color: var(--text-muted); font-family: 'Outfit', sans-serif; letter-spacing: 0.05em;
         }
         .ana-about-footer {
             display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem;
@@ -764,11 +771,11 @@ body {
             font-family: 'Noto Sans Myanmar','Outfit',sans-serif; line-height: 1.45;
         }
         @media (max-width: 720px) {
-            .ana-about-gallery-row, .ana-about-footer { grid-template-columns: 1fr; }
+            .ana-about-footer { grid-template-columns: 1fr; }
             .ana-about-panel { padding: 1rem; }
             .ana-about-hero-photo { width: 84px; height: 84px; }
             .ana-about-image-frame .ana-about-hero-photo { width: 100%; height: 240px; }
-            .ana-about-gallery-photo { height: 220px; }
+            .ana-about-gallery-photo { height: 240px; }
         }
 
         /* ---- History overlay / panel ---- */
