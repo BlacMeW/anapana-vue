@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Ānāpāna Breathing Counter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        /* Base styles already in style.css */
+        /* Basic reset for standalone mode */
+        body { margin: 0; padding: 0; min-height: 100vh; background-color: var(--cream); color: var(--text-dark); }
+        .lang-en { display: none !important; }
+        .lang-my { display: inline-block; }
+        /* Language toggle helper if needed */
+        .language-toggle {
+            position: absolute; top: 1rem; right: 1rem;
+            background: var(--cream-dark); border: 1px solid rgba(184,138,20,0.3);
+            padding: 0.4rem 1rem; border-radius: 9999px; cursor: pointer;
+            font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--primary-light);
+        }
+    </style>
+</head>
+<body class="lang-my">
+
+<div id="app">
+    <!-- Language Toggle -->
+    <button class="language-toggle" @click="toggleLanguage">
+        {{ isEnglish ? 'MY' : 'EN' }}
+    </button>
+
+    <section class="anapana-section">
+        <div class="section-header">
+            <h3>
+                <span v-if="!isEnglish" class="lang-my">အာနာပါန ရှုမှတ် စာရင်း</span>
+                <span v-else class="lang-en" style="display:inline-block!important">Ānāpāna Breathing Counter</span>
+            </h3>
+            <div class="sub-my lang-my" v-if="!isEnglish">တစ်ချက်ထိ၍ တစ်ကြိမ်မှတ်ယူပါ။ နှစ်ချက်ထိ သို့မဟုတ် Esc ဖြင့် ရပ်နိုင်ပါသည်။</div>
+            <div class="sub-my lang-en" v-else style="display:block!important">One-finger tap — count &nbsp;·&nbsp; Two-finger tap / Esc — stop</div>
+            <div class="divider"></div>
+        </div>
+
+        <div class="anapana-container">
+            <!-- Three Counters -->
+            <div class="anapana-counters">
+                <div class="anapana-counter-box" id="anapanaTimeBox">
+                    <div class="anapana-counter-label">{{ isEnglish ? 'Time' : 'အချိန်' }}</div>
+                    <div class="anapana-counter-val">{{ formattedTime }}</div>
+                    <div class="anapana-counter-sub">{{ isEnglish ? 'Elapsed' : 'ကြာမြင့်ချိန်' }}</div>
+                </div>
+                <div class="anapana-counter-box" id="anapanaBreathBox">
+                    <div class="anapana-counter-label">{{ isEnglish ? 'Breaths' : 'ရှုမှတ်' }}</div>
+                    <div class="anapana-counter-val">{{ displayBreaths }}</div>
+                    <div class="anapana-counter-sub">{{ isEnglish ? 'count' : 'ကြိမ်' }}</div>
+                </div>
+                <div class="anapana-counter-box" id="anapanaRoundBox">
+                    <div class="anapana-counter-label">{{ isEnglish ? 'Rounds' : 'ပတ် (ဝါရ)' }}</div>
+                    <div class="anapana-counter-val">{{ rounds }}</div>
+                    <div class="anapana-counter-sub">
+                        {{ displayBreathsPerRoundSub }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breath per Round Preset -->
+            <div class="anapana-presets">
+                <span class="anapana-preset-label">{{ isEnglish ? 'Per round' : 'တစ်ဝါရလျှင်' }} &nbsp;</span>
+                <button v-for="val in [8, 10, 12]" :key="val" 
+                        class="btn-anapana-preset" :class="{active: breathsPerRound === val}" 
+                        @click="setBreathsPerRound(val)">
+                    {{ val }}
+                </button>
+                <span class="anapana-preset-label">&nbsp; {{ isEnglish ? 'breaths' : 'ကြိမ် = ၁ ဝါရ' }}</span>
+            </div>
+
+            <!-- Tap Mode Toggle -->
+            <div class="anapana-mode-row">
+                <span class="anapana-preset-label">{{ isEnglish ? 'Mode' : 'မှတ်နည်း' }} &nbsp;</span>
+                <button class="btn-anapana-mode" :class="{active: tapMode === 'breath'}" @click="setTapMode('breath')">
+                    <span v-if="!isEnglish">တစ်ချက်စီ မှတ်ယူပါ</span><span v-else>Per Breath</span>
+                </button>
+                <button class="btn-anapana-mode" :class="{active: tapMode === 'round'}" @click="setTapMode('round')">
+                    <span v-if="!isEnglish">တစ်ဝါရ = ၈ / ၁၀ / ၁၂ ကြိမ် ပြည့်သည့်အခါမှ မှတ်ယူပါ</span><span v-else>Per Round</span>
+                </button>
+            </div>
+
+            <!-- Round Target Setting -->
+            <div class="ana-round-target-row">
+                <span class="ana-round-target-label">{{ isEnglish ? 'Round target' : 'ရည်မှန်းပတ် (ဝါရ)' }} &nbsp;</span>
+                <input class="ana-round-target-input" type="number" min="0" max="999" v-model.number="roundTarget" step="1">
+                <span class="ana-round-target-label">&nbsp; {{ isEnglish ? 'rounds' : 'ပတ် (ဝါရ)' }}</span>
+                <span class="ana-round-target-hint">{{ isEnglish ? '(0 = off)' : '(0 = မသတ်မှတ်ထား)' }}</span>
+            </div>
+
+            <!-- Breath Timing Target Settings -->
+            <div class="ana-timing-row">
+                <span class="ana-timing-label">{{ isEnglish ? 'Target Duration' : 'ရည်မှန်းကြာမြင့်ချိန်' }} &nbsp;</span>
+                <div class="ana-timing-group">
+                    <span class="ana-timing-label" style="font-size:0.72rem;">{{ isEnglish ? 'Inhale' : 'ရှုသွင်း' }}</span>
+                    <input class="ana-timing-input" type="number" min="1" max="30" v-model.number="inhaleTarget" step="0.5">
+                    <span class="ana-timing-unit">s</span>
+                </div>
+                <span class="ana-timing-sep">+</span>
+                <div class="ana-timing-group">
+                    <span class="ana-timing-label" style="font-size:0.72rem;">{{ isEnglish ? 'Exhale' : 'ရှုထုတ်' }}</span>
+                    <input class="ana-timing-input" type="number" min="1" max="30" v-model.number="exhaleTarget" step="0.5">
+                    <span class="ana-timing-unit">s</span>
+                </div>
+                <span class="ana-timing-total">= {{ targetDuration }}s/breath</span>
+            </div>
+
+            <!-- Start Button -->
+            <div class="anapana-start-btn" @click="startSession">
+                <div class="anapana-touch-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="3.8" r="2.4"/><path d="M8.5,7 C7,8 6.5,9.5 6.5,11 L4,16 Q2.5,19 3,21 Q5,22 8,21 L10.5,19.5 Q11.5,19 12,18.5 Q12.5,19 13.5,19.5 L16,21 Q19,22 21,21 Q21.5,19 20,16 L17.5,11 C17.5,9.5 17,8 15.5,7 Q14,6.2 12,6.2 Q10,6.2 8.5,7 Z"/><ellipse cx="12" cy="17.5" rx="3" ry="1.2"/></svg>
+                </div>
+                <div class="anapana-touch-hint" v-if="!isEnglish">
+                    ရှုမှတ်ခြင်း စတင်ရန် ဖိနှိပ်ပါ<span class="hint-en" style="display:block;font-size:0.6rem;opacity:0.7;margin-top:0.2rem">Tap to begin</span>
+                </div>
+                <div class="anapana-touch-hint" v-else>
+                    Tap to Begin<span class="hint-en" style="display:block;font-size:0.6rem;opacity:0.7;margin-top:0.2rem">Full-screen tap mode</span>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="anapana-status idle" v-show="!running">
+                <span>{{ isEnglish ? 'Idle' : 'ငြိမ်သက်စွာ စောင့်နေသည်' }}</span>
+            </div>
+
+            <!-- Show Result Button -->
+            <button class="btn-show-result" :class="{visible: showResultBtn}" @click="openResultModal">
+                <svg style="width:16px;height:16px;fill:currentColor;flex-shrink:0;" viewBox="0 0 24 24"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2.5 2.1H4.5V5h15v14.1zm0-16.1H4.5C3.4 3 3 3.9 3 5v14c0 1.1.4 2 1.5 2H19.5c1.1 0 1.5-.9 1.5-2V5c0-1.1-.4-2-1.5-2z"/></svg>
+                <span>{{ isEnglish ? 'Show Result' : 'ရလဒ်ကြည့်ရှုရန်' }}</span>
+            </button>
+
+            <!-- History Button -->
+            <button class="btn-show-history" :class="{visible: history.length > 0}" @click="openHistoryModal">
+                <svg style="width:15px;height:15px;fill:currentColor;flex-shrink:0;" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                <span>{{ isEnglish ? 'History' : 'မှတ်တမ်း' }}</span>
+            </button>
+
+            <!-- Wake Lock Toggle -->
+            <button class="btn-wakelock" :class="{active: wakeLockEnabled}" @click="toggleWakeLock" title="Screen Wake Lock" v-if="wakeLockSupported">
+                <svg v-if="wakeLockEnabled" style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19zm1-11h-2v4l3.5 2.1.8-1.2-2.3-1.4V8z"/></svg>
+                <svg v-else style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3zm0 16a7 7 0 1 1 0-14A7 7 0 0 1 12 19zm1-11h-2v4l3.5 2.1.8-1.2-2.3-1.4V8z"/><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2"/></svg>
+                <span>{{ isEnglish ? 'Keep Screen On' : 'မျက်နှာပြင် မပိတ်စေပါ' }}</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- FULL-SCREEN TAP OVERLAY -->
+    <div class="anapana-overlay" :class="{visible: running, 'tap-flash': tapFlash, 'reject-flash': rejectFlash}" 
+         @touchstart="handleTouch" @click="handleClick" @dblclick.prevent="stopSession">
+
+        <!-- Ambient breathing rings -->
+        <div class="ao-rings" aria-hidden="true">
+            <div class="ao-ring r1"></div>
+            <div class="ao-ring r2"></div>
+            <div class="ao-ring r3"></div>
+        </div>
+
+        <!-- Top counters bar -->
+        <div class="ao-counters">
+            <div class="ao-counter">
+                <div class="ao-counter-label">{{ isEnglish ? 'Time' : 'အချိန်' }}</div>
+                <div class="ao-counter-val">{{ formattedTime }}</div>
+                <div class="ao-counter-sub" v-if="!isEnglish">ကြာမြင့်ချိန်</div>
+            </div>
+            <div class="ao-counter">
+                <div class="ao-counter-label">{{ isEnglish ? 'Breaths' : 'ရှုမှတ်' }}</div>
+                <div class="ao-counter-val" :class="{pop: breathPop}">{{ displayBreaths }}</div>
+                <div class="ao-counter-sub" v-if="!isEnglish">ကြိမ်</div>
+            </div>
+            <div class="ao-counter">
+                <div class="ao-counter-label">{{ isEnglish ? 'Rounds' : 'ပတ် (ဝါရ)' }}</div>
+                <div class="ao-counter-val" :class="{pop: roundPop}">{{ rounds }}</div>
+                <div class="ao-counter-sub">
+                    {{ displayRoundTarget }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Centre hint -->
+        <div class="ao-center">
+            <div class="ao-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="3.8" r="2.4"/><path d="M8.5,7 C7,8 6.5,9.5 6.5,11 L4,16 Q2.5,19 3,21 Q5,22 8,21 L10.5,19.5 Q11.5,19 12,18.5 Q12.5,19 13.5,19.5 L16,21 Q19,22 21,21 Q21.5,19 20,16 L17.5,11 C17.5,9.5 17,8 15.5,7 Q14,6.2 12,6.2 Q10,6.2 8.5,7 Z"/><ellipse cx="12" cy="17.5" rx="3" ry="1.2"/></svg>
+            </div>
+            <div class="ao-hint-main" v-html="overlayHintMain"></div>
+            <div class="ao-hint-sub" v-html="overlayHintSub"></div>
+        </div>
+
+        <!-- Feedback badge -->
+        <div class="ao-breath-badge" :class="[breathBadgeClass, {show: showBadge}]">
+            {{ badgeText }}
+        </div>
+
+        <!-- Stop button -->
+        <button class="ao-stop-btn" @click.stop="stopSession">
+            <svg style="width:13px;height:13px;fill:currentColor;flex-shrink:0;" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            <span>{{ isEnglish ? 'Stop' : 'ရပ်ပါ' }}</span>
+        </button>
+
+        <!-- Round target banner -->
+        <div class="ao-target-banner" :class="{visible: showTargetBanner}">
+            <div class="ao-target-banner-inner">
+                <div class="ao-target-banner-icon">🔔</div>
+                <div class="ao-target-banner-title">{{ isEnglish ? 'Round Target Reached!' : 'ရည်မှန်းအလှည့် ပြည့်ပါပြီ။' }}</div>
+                <div class="ao-target-banner-sub">{{ roundTarget }} {{ isEnglish ? 'rounds' : 'ပတ် (ဝါရ)' }}  ·  {{ formattedTime }}</div>
+            </div>
+        </div>
+
+        <!-- Live chart -->
+        <div class="ao-chart-wrap" :class="{'has-data': breathLog.length > 0}">
+            <div class="ao-chart-title">ရှုမှတ်ချိန်၏ ကွာဟချက် (စက္ကန့်) — ↑ နောက်ကျ၊ ↓ စော</div>
+            <canvas id="aoLiveChart" ref="liveChartCanvas"></canvas>
+        </div>
+    </div>
+    
+    <!-- Result Modal -->
+    <div class="ana-result-overlay" :class="{visible: showResultModal}">
+        <div class="ana-result-panel">
+            <div class="ana-result-header">
+                <div class="ana-result-title">
+                    <span v-if="!isEnglish">ရှုမှတ်ရလဒ်</span><span v-else>Session Result</span>
+                    <span class="ana-result-history-badge" :class="{visible: isViewingHistory}">{{ historyDateLabel }}</span>
+                </div>
+                <button class="ana-result-close" @click="hideResult" title="Close">✕</button>
+            </div>
+            
+            <div class="ana-result-stats" v-if="resultStats">
+                <div class="ana-verdict-row">
+                    <div class="ana-verdict-circle" :style="{borderColor: resultStats.gradeColor, color: resultStats.gradeColor}">
+                        <div class="avc-pct">{{ resultStats.goodPct }}<span>%</span></div>
+                        <div class="avc-lbl">{{ isEnglish ? 'Balance' : 'ညီမျှမှု' }}</div>
+                    </div>
+                    <div class="ana-verdict-chips">
+                        <div class="avc-chip chip-fast">{{ isEnglish ? '↓ Fast' : '↓ စော' }} &nbsp;<b>{{ resultStats.fastCount }}</b> {{ isEnglish ? 'times' : 'ကြိမ်' }}</div>
+                        <div class="avc-chip chip-good">{{ isEnglish ? '✓ Correct' : '✓ ညီမျှ' }} &nbsp;<b>{{ resultStats.goodCount }}</b> {{ isEnglish ? 'times' : 'ကြိမ်' }}</div>
+                        <div class="avc-chip chip-slow">{{ isEnglish ? '↑ Slow' : '↑ နောက်ကျ' }} &nbsp;<b>{{ resultStats.slowCount }}</b> {{ isEnglish ? 'times' : 'ကြိမ်' }}</div>
+                    </div>
+                </div>
+                <div class="ana-proportion-bar">
+                    <div v-if="resultStats.fastW > 0" class="apb-fast" :style="{width: resultStats.fastW + '%'}">{{ resultStats.fastCount > 1 || resultStats.fastW > 8 ? resultStats.fastCount : '' }}</div>
+                    <div v-if="resultStats.goodW > 0" class="apb-good" :style="{width: resultStats.goodW + '%'}">{{ resultStats.goodCount > 1 || resultStats.goodW > 8 ? resultStats.goodCount : '' }}</div>
+                    <div v-if="resultStats.slowW > 0" class="apb-slow" :style="{width: resultStats.slowW + '%'}">{{ resultStats.slowCount > 1 || resultStats.slowW > 8 ? resultStats.slowCount : '' }}</div>
+                </div>
+                <div class="ana-mini-stats">
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Duration' : 'ကြာမြင့်ချိန်' }}</div><div class="ams-val">{{ resultStats.durStr }}</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? (resultStats.isRound ? 'Rounds' : 'Breaths') : (resultStats.isRound ? 'ပတ် (ဝါရ) အရေအတွက်' : 'ရှုမှတ်အရေအတွက်') }}</div><div class="ams-val">{{ resultStats.n }}</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? (resultStats.isRound ? 'Target / round' : 'Target / breath') : (resultStats.isRound ? 'တစ်အလှည့် ရည်မှန်းချိန်' : 'တစ်ချက် ရည်မှန်းချိန်') }}</div><div class="ams-val" style="font-size:.95rem">{{ resultStats.target0 }}s</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Total breaths' : 'စုစုပေါင်း ရှုမှတ်' }}</div><div class="ams-val">{{ resultStats.totalBreaths }}</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Completed rounds' : 'ပြီးစီးသော ပတ် (ဝါရ)' }}</div><div class="ams-val">{{ resultStats.completedRounds }}</div></div>
+                    <div class="ams-item" v-if="!resultStats.isRound && resultStats.remainingBreaths > 0"><div class="ams-label">{{ isEnglish ? 'Remaining in round' : 'လက်ကျန် ရှုချက်' }}</div><div class="ams-val">{{ resultStats.remainingBreaths }}</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? (resultStats.isRound ? 'Avg / round' : 'Avg / breath') : (resultStats.isRound ? 'ပျမ်းမျှ ပတ် (ဝါရ) ချိန်' : 'ပျမ်းမျှ တစ်ချက်ချိန်') }}</div><div class="ams-val">{{ resultStats.isRound ? resultStats.avgActual : resultStats.avgActualPerBreath }}s</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Average deviation' : 'ပျမ်းမျှ ကွာဟချိန်' }}</div><div class="ams-val" :style="{color: resultStats.avgDevColor}">{{ resultStats.avgDevSign }}{{ resultStats.avgDev }}s</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Consistency' : 'ညီမျှမှု' }}</div><div class="ams-val" :style="{color: resultStats.consistencyColor}">{{ resultStats.consistencyPct }}%</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Deviation range' : 'ကွာဟမှု အနည်းဆုံး/အများဆုံး' }}</div><div class="ams-val" style="font-size:.9rem">{{ resultStats.minDevStr }} ~ {{ resultStats.maxDevStr }}s</div></div>
+                </div>
+            </div>
+
+            <!-- Samadhi Analysis Section -->
+            <div class="ana-samadhi-section" v-if="samadhiStats">
+                <div class="ana-samadhi-title"><span v-if="!isEnglish">သမာဓိ ရမှတ်</span><span v-else>Samadhi Score</span></div>
+                <div class="ana-samadhi-row">
+                    <div class="ana-samadhi-badge" :style="{borderColor: samadhiStats.levelColor, color: samadhiStats.levelColor}">
+                        <div class="asb-pct">{{ samadhiStats.samadhiScore }}<span>%</span></div>
+                        <div class="asb-lbl" :style="{color: samadhiStats.levelColor}">{{ samadhiStats.levelLabel }}</div>
+                    </div>
+                    <div class="ana-samadhi-meter-wrap">
+                        <div class="adm-track"><div class="adm-fill" :style="{width: samadhiStats.samadhiScore + '%', background: samadhiStats.gradFill}"></div></div>
+                        <div class="adm-endpoints"><span>{{ isEnglish ? 'Low' : 'နိမ့်' }}</span><span>{{ isEnglish ? 'High' : 'မြင့်' }}</span></div>
+                    </div>
+                </div>
+                <div class="ana-samadhi-pace-row">
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? (resultStats.isRound ? 'Target / round' : 'Target / breath') : (resultStats.isRound ? 'သတ်မှတ် ပတ် (ဝါရ) ချိန်' : 'သတ်မှတ် တစ်ချက်ချိန်') }}</div><div class="ams-val">{{ samadhiStats.expectedPerEvent }}s</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? (resultStats.isRound ? 'Actual / round' : 'Actual / breath') : (resultStats.isRound ? 'ပျမ်းမျှ ပတ် (ဝါရ) ချိန်' : 'ပျမ်းမျှ တစ်ချက်ချိန်') }}</div><div class="ams-val">{{ samadhiStats.actualPerEvent }}s</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Pace deviation' : 'ကြာမြင့်ချိန် ကွာဟမှု' }}</div><div class="ams-val" :style="{color: samadhiStats.paceColor}">{{ samadhiStats.paceDevStr }}</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Breath quality' : 'ရှုချိန် ညီမျှမှု' }}</div><div class="ams-val" :style="{color: samadhiStats.qualColor}">{{ samadhiStats.qualityPct }}%</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Consistency' : 'ညီမျှတည်ငြိမ်မှု' }}</div><div class="ams-val" :style="{color: samadhiStats.consColor}">{{ samadhiStats.consistencyPct }}%</div></div>
+                    <div class="ams-item"><div class="ams-label">{{ isEnglish ? 'Duration score' : 'ကြာချိန် ရမှတ်' }}</div><div class="ams-val" :style="{color: samadhiStats.durColor}">{{ samadhiStats.durPct }}%<span style="font-size:.65rem;font-weight:600;color:var(--text-muted);margin-left:.25rem;">({{ samadhiStats.durLabel }})</span></div></div>
+                </div>
+                <div class="ana-recommendation-box">
+                    <div class="arb-icon">🪷</div><div class="arb-text">{{ samadhiStats.recommendation }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="ana-history-overlay" :class="{visible: showHistoryModal}">
+        <div class="ana-history-panel">
+            <div class="ana-history-header">
+                <div class="ana-history-title-wrap">
+                    <div class="ana-history-title"><span v-if="!isEnglish">ရှုမှတ်မှတ်တမ်း</span><span v-else>Session History</span></div>
+                    <span class="ana-history-badge">{{ history.length }}</span>
+                </div>
+                <div class="ana-history-hdr-btns">
+                    <button class="btn-history-clearall" @click="clearHistory"><span v-if="!isEnglish">အားလုံး ဖယ်ရှားရန်</span><span v-else>Clear all</span></button>
+                    <button class="btn-history-close" @click="closeHistoryModal">✕</button>
+                </div>
+            </div>
+            <div class="ana-history-list">
+                <div v-if="history.length === 0" class="ana-history-empty">{{ isEnglish ? 'No history available' : 'သိမ်းထားသော မှတ်တမ်း မရှိသေးပါ' }}</div>
+                <div v-for="entry in history" :key="entry.id" class="ana-history-item">
+                    <div class="ahi-badge" :style="{borderColor: entry.levelColor, color: entry.levelColor}">
+                        <div class="ahi-pct">{{ entry.samadhiScore }}<span style="font-size:.52em">%</span></div>
+                    </div>
+                    <div class="ahi-info">
+                        <div class="ahi-datetime">{{ isEnglish ? 'Date' : 'ရက်စွဲ' }}: {{ entry.dt }}၊ {{ isEnglish ? 'Time' : 'အချိန်' }}: {{ entry.tm }}</div>
+                        <div class="ahi-stats">
+                            <span class="ahi-stat">⏱ {{ isEnglish ? 'Duration' : 'ကြာမြင့်ချိန်' }}: {{ entry.durationStr }}</span>
+                            <span class="ahi-stat">၊ {{ isEnglish ? 'Rounds' : 'အလှည့်' }}: {{ entry.rounds }} × {{ entry.breathsPer }}၊ {{ entry.tapMode === 'round' ? (isEnglish ? 'Round mode' : 'အလှည့်နည်း') : (isEnglish ? 'Per breath' : 'တစ်ချက်နည်း') }}</span>
+                            <span class="ahi-level" :style="{color: entry.levelColor}">{{ entry.levelLabel }}</span>
+                        </div>
+                    </div>
+                    <div class="ahi-btns">
+                        <button class="btn-ahi-view" @click="viewHistoryEntry(entry)">{{ isEnglish ? 'View' : 'ကြည့်ရန်' }}</button>
+                        <button class="btn-ahi-del" @click="deleteHistoryEntry(entry.id)" :title="isEnglish ? 'Delete' : 'ဖျက်ရန်'">✕</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
