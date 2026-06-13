@@ -18,7 +18,7 @@
 ### About အပိုင်း
 
 - `About` modal ကို `/DATA/LLM_Projs/TestArea/geolib/example/lib/widgets/about_dialog_widget.dart` ထဲက layout inspiration အတိုင်း ချိတ်ဆက်ထားပါသည်။
-- သို့သော် About ထဲက စာသားများသည် `anapana-vue` အက်ပ်အတွက်ပဲ သီးသန့် ပြန်လည်ရေးသားထားသော စာသားများဖြစ်ပါသည်။
+- About ထဲက စာသားများသည် `anapana-vue` အက်ပ်အတွက်ပဲ သီးသန့် ပြန်လည်ရေးသားထားသော စာသားများဖြစ်ပြီး၊ သားသားလေးအတွက် ရည်စူးချက်ကိုလည်း ထည့်သွင်းထားပါသည်။
 - Local image assets များကို `assets/images/` ထဲတွင် ထားပြီး About layout တွင် ပြသထားပါသည်။
 
 ### ဖိုင်ဖွဲ့စည်းပုံ
@@ -77,7 +77,7 @@ It is designed to show breathing time, breath counts, round counts (ဝါရ), 
 - This is a static app and does not require a build tool.
 - Vue 3 is loaded directly from a CDN.
 - You can run it simply by opening `index.html` in a browser.
-- The `About` modal follows the same visual structure as the Flutter reference dialog, but the wording is written specifically for this app.
+- The `About` modal follows the same visual structure as the Flutter reference dialog, while the wording is written specifically for this app and its dedication.
 
 ### GitHub Pages
 
