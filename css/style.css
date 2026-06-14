@@ -20,20 +20,68 @@ body {
     font-family: 'Outfit', 'Noto Sans Myanmar', sans-serif;
     background-color: var(--cream);
     color: var(--text-dark);
-    margin: 0; padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.25rem;
+    width: 100%;
+}
+/* Center the main app content on the page */
+#app {
+    width: min(100%, 900px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.anapana-section {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 * { box-sizing: border-box; }
 .lang-en { display: none; } /* Default hide EN if we just want MY or toggle */
 
         /* ANAPANA BREATHING COUNTER */
-        .anapana-section { padding: 4.5rem 2.5rem; background: var(--cream); }
+        .anapana-section {
+            padding: clamp(1.25rem, 3vw, 3rem) clamp(1rem, 3vw, 2rem);
+            background: var(--cream);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .section-header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 0.35rem;
+        }
+        .section-header h3 {
+            margin: 0 0 0.35rem;
+        }
+        .section-header .sub-my,
+        .section-header .sub-en {
+            text-align: center;
+        }
+        .divider {
+            margin: 0.7rem auto 0;
+        }
         .anapana-container {
-            max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2rem;
+            max-width: 560px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(1rem, 2vw, 1.75rem);
         }
 
         /* Three counter cards row */
         .anapana-counters {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.65rem, 1.8vw, 1rem);
+            width: 100%;
         }
         .anapana-counter-box {
             background: var(--white); border-radius: 1rem; padding: 1.2rem 0.75rem;
@@ -552,10 +600,45 @@ body {
         }
 
         @media (max-width: 768px) {
-            .anapana-counter-val { font-size: 1.6rem; }
-            .anapana-touch-zone { width: 190px; height: 190px; }
+            body { padding: 0.85rem; }
+            #app { width: 100%; }
+            .anapana-section { padding: 1rem 0.85rem 1.2rem; }
+            .section-header { text-align: center; }
+            .section-header h3 { margin: 0 0 0.35rem; }
+            .anapana-container { gap: 1rem; }
+            .anapana-counters { grid-template-columns: 1fr; gap: 0.75rem; }
+            .anapana-counter-val { font-size: 1.65rem; }
+            .anapana-presets,
+            .anapana-mode-row,
+            .ana-round-target-row,
+            .ana-timing-row {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+            .anapana-start-btn { width: 184px; height: 184px; }
             .ana-result-panel { padding: 1.2rem; }
             #anaResultChart { height: 140px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 0.55rem; }
+            .language-toggle { top: 0.7rem; right: 0.7rem; }
+            .anapana-section { padding: 0.9rem 0.7rem 1rem; }
+            .section-header h3 { font-size: 1.15rem; }
+            .section-header .sub-my,
+            .section-header .sub-en { font-size: 0.9rem; line-height: 1.55; }
+            .anapana-counter-box { padding: 1rem 0.65rem; }
+            .anapana-start-btn { width: 172px; height: 172px; }
+            .anapana-touch-hint { padding: 0 0.9rem; }
+            .btn-anapana-preset,
+            .btn-anapana-mode,
+            .btn-wakelock,
+            .btn-show-result,
+            .btn-show-history,
+            .btn-show-about {
+                padding-inline: 0.9rem;
+            }
         }
 
         /* ---- Samadhi Analysis Section ---- */

@@ -10,7 +10,16 @@
     <style>
         /* Base styles already in style.css */
         /* Basic reset for standalone mode */
-        body { margin: 0; padding: 0; min-height: 100vh; background-color: var(--cream); color: var(--text-dark); }
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            background-color: var(--cream); color: var(--text-dark);
+            display: flex; justify-content: center;
+        }
+        #app {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
         .lang-en { display: none !important; }
         .lang-my { display: inline-block; }
         /* Language toggle helper if needed */
